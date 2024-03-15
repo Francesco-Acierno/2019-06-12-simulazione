@@ -1,36 +1,43 @@
 import translator as tr
 
-t = tr.Translator("dictionary.txt")
-
+t = tr.Translator()
+t.loadDictionary("dictionary.txt")
 
 while(True):
-
     t.printMenu()
 
-    t.loadDictionary("dictionary.txt")
-
     txtIn = input()
-
     # Add input control here!
+    if not txtIn.isdigit():
+        print("Errore: valori inseriti non correttamente")
+        continue
 
     if int(txtIn) == 1:
-        print(f"Ok, quale parola devo aggiungere?")
+        print("Ok, quale parola devo aggiungere?\n")
         txtIn = input()
-        print(t.handleAdd(txtIn))
-    elif int(txtIn) == 2:
-        print(f"Ok, quale parola devo tradurre?")
-        txtIn = input()
-        print(t.handleTranslate(txtIn))
-    elif int(txtIn) == 3:
-        print(f"Ok, quale parola devo cercare?")
-        txtIn = input()
-        parole_soddisfacenti = t.handleWildCard(txtIn)
-        if parole_soddisfacenti:
-            print("Le seguenti parole aliene soddisfano il criterio di ricerca:")
-            for parola_aliena, traduzione in parole_soddisfacenti:
-                print(f"{parola_aliena}: {traduzione}")
-        else:
-            print("Nessuna parola aliena soddisfa il criterio di ricerca.")
+        try:
+            t.handleAdd(txtIn)
+            print("Aggiunta!")
+        except ValueError as e:
+            print(f"Errore: {e}")
+        continue
 
-    elif int(txtIn) == 4:
+    if int(txtIn) == 2:
+        print("Ok, quale parola devo cercare?\n")
+        txtIn = input()
+        txtTransl = t.handleTranslate(txtIn)
+        print(txtTransl)
+        continue
+
+    if int(txtIn) == 3:
+        print("Ok, quale parola devo cercare?\n")
+        txtIn = input()
+        txtTransl = t.handleWildCard(txtIn)
+        print(txtTransl)
+        continue
+
+    if int(txtIn) == 4:
+        t.dict.printAll()
+
+    if int(txtIn) == 5:
         break
