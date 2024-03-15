@@ -23,6 +23,14 @@ while(True):
         print(t.handleTranslate(txtIn))
     elif int(txtIn) == 3:
         print(f"Ok, quale parola devo cercare?")
-        pass
+        txtIn = input()
+        parole_soddisfacenti = t.handleWildCard(txtIn)
+        if parole_soddisfacenti:
+            print("Le seguenti parole aliene soddisfano il criterio di ricerca:")
+            for parola_aliena, traduzione in parole_soddisfacenti:
+                print(f"{parola_aliena}: {traduzione}")
+        else:
+            print("Nessuna parola aliena soddisfa il criterio di ricerca.")
+
     elif int(txtIn) == 4:
         break
