@@ -1,19 +1,21 @@
 # from dataclasses import dataclass
 
 import dataclasses
+import operator
 
-@dataclasses.dataclass # @dataclass
+
+@dataclasses.dataclass(order=True)  # @dataclass
 class Voto:
     esame: str
     cfu: int
-    punteggio : int
+    punteggio: int
     lode: bool
     data: str
 
     def str_punteggio(self):
         """
         Costruisce la stringa che rappresenta in forma leggibile il punteggio tenendo conto della possibilità di lode
-        :return: "30 e lode" oppure il punteggio (senza lode), sottoforma di stringa
+        :return: "30 e lode" oppure il punteggio (senza lode), sotto forma di stringa
         """
         if self.punteggio == 30 and self.lode:
             return "30 e lode"
@@ -21,6 +23,15 @@ class Voto:
             return f"{self.punteggio}"
             # return self.punteggio NO
 
+    def copy(self):
+        return Voto(self.esame, self.cfu, self.punteggio, self.lode, self.data)
+
+    def __str__(self):
+        return f'{self.esame} ({self.cfu} CFU): voto {self.punteggio} il {self.data}'
+
+
+def estrai_campo_esame(self):
+    return v.esame
 
 
 class Libretto:
@@ -28,7 +39,7 @@ class Libretto:
         self._voti = []
 
     def append(self, voto):
-        if self.has_voto(voto) == False and self.has_conflitto(voto) == False:
+        if self.has_voto(voto) is False and self.has_conflitto(voto) is False:
             self._voti.append(voto)
         else:
             raise ValueError("Voto non valido")
@@ -86,7 +97,6 @@ class Libretto:
                 return True
         return False
 
-
     def has_conflitto(self, voto):
         """
         Ricerca se nel libretto esiste già un esame con lo stesso nome ma con punteggio diverso
@@ -95,11 +105,104 @@ class Libretto:
         """
         for v in self._voti:
             if v.esame == voto.esame and not (v.punteggio == voto.punteggio and v.lode == voto.lode):
-            # Scrittura errata: if (v.esame == voto.esame and v.punteggio != voto.punteggio) or v.lode != voto.lode:
-            # if v.esame == voto.esame and (v.punteggio != voto.punteggio or v.lode != voto.lode):
+                # Scrittura errata: if (v.esame == voto.esame and v.punteggio != voto.punteggio) or v.lode != voto.lode:
+                # if v.esame == voto.esame and (v.punteggio != voto.punteggio or v.lode != voto.lode):
                 return True
         return False
 
+    def copy(self):
+        nuovo = Libretto()
+        # nuovo._voti = self._voti.copy()
+        # nuovo._voti self._voti[:] uguale a quella di sopra
+        for v in self._voti:
+            nuovo._voti.append(v.copy())
+        return nuovo
+
+    def crea_migliorato(self):
+        """
+        Crea una copia del libretto e "migliora" i voti in esso presenti.
+        :return:
+        """
+        nuovo = self.copy()
+        # nuovo._voti[0] = self._voti[0]
+
+        for v in nuovo._voti:
+            if 18 <= v.punteggio <= 23:
+                v.punteggio += 1
+            elif 24 <= v.punteggio <= 28:
+                v.punteggio += 2
+            elif v.punteggio == 29:
+                v.punteggio = 30
+
+        return nuovo
+
+    def crea_ordinato_per_esame(self):
+        nuovo = self.copy()
+        # ordina i nuovo._voti
+        nuovo.ordina_per_esame()
+        return nuovo
+
+    def ordina_per_esame(self):
+        # ordina self._voti per nome esame
+        # self._voti.sort(key=estrai_campo_esame)
+        self._voti.sort(key=operator.attrgetter('esame'))
+        # self._voti.sort(key=lambda v: v.esame)
+        # self._voti.sort()
+
+    def crea_ordinato_per_punteggio(self):
+        nuovo = self.copy()
+        self._voti.sort(key=lambda v: (v.punteggio, v.lode), reverse=True)
+        return nuovo
+
+    def stampa(self):
+        print(f"Hai {len(self._voti)} voti")
+        for v in self._voti:
+            print(v)
+        print(f"La media vale {self.media():.2f}")
+
+    def stampaGUI(self):
+        outList = []
+        outList.append(f"Hai {len(self._voti)} voti")
+        for v in self._voti:
+            outList.append(v)
+        outList.append(f"La media vale {self.media():.2f}")
+        return outList
+
+    def cancella_inferiori(self, punteggio):
+        #     for v in self._voti:
+        #        if v.punteggio < punteggio:
+        #            self._voti.remove(v)
+        #
+        #     for i in range(len(self._voti)):
+        #        if self._voti[i] < punteggio:
+        #           self._voti.pop(i)
+        # [18, 30, 30, 30 ]
+        """
+        voti_nuovi = []
+        for v in self._voti:
+            if v.punteggio >= punteggio:
+                voti_nuovi.append(v)
+        self._voti = voti_nuovi
+        """
+
+        self._voti = [v for v in self._voti if v.punteggio >= punteggio]
+
+    """
+    Opzione 1: 
+    metodo stampa_per_nome e metodo stampa_per_punteggio, che semplicemente stampano e non modificano nulla
+    
+    Opzione 2:
+    metodo crea_libretto_ordinato_per_nome, ed un metodo crea_libretto_ordinato_per_punteggio, che creano delle copie 
+    separate, sulle quali potrò chiamare il metodo stampa()
+    
+    Opzione 3:
+    metodo ordina_per_nome, che modifica il libretto stesso riordinando i Voti, e ordina_per_punteggio, poi userò 
+    stampa() 
+    + aggiungiamo gratis un metodo copy()
+    
+    Opzione 2bis:
+    crea una copia shallow del libretto
+    """
 
 
 def _test_voto():
@@ -109,5 +212,6 @@ def _test_voto():
     l1.append(v1)
     print(l1.media())
 
+
 if __name__ == "__main__":
-        _test_voto()
+    _test_voto()

@@ -1,7 +1,7 @@
 """
 Scrivere un programma Python che permetta di gestire un libretto universitario.
 Il programma dovrà definire una classe Voto, che rappresenta un singolo esame superato,
-ed una classe Libretto, che contiene l'elenco dei voti di uno studente.
+e una classe Libretto, che contiene l'elenco dei voti di uno studente.
 """
 from dataclasses import dataclass
 
@@ -24,13 +24,15 @@ class Voto:
         return f"Voto('{self.esame}', {self.cfu}, {self.punteggio}, {self.lode}, '{self.data}')"
 """
 
+
 @dataclass
 class Voto:
     esame: str
     cfu: int
-    punteggio : int
+    punteggio: int
     lode: bool
     data: str
+
 
 class Libretto:
     def __init__(self):
@@ -40,14 +42,10 @@ class Libretto:
         self._voti.append(voto)
 
     def media(self):
-        if len(self._voti)==0:
+        if len(self._voti) == 0:
             raise ValueError("Elenco voti vuoto")
         punteggi = [v.punteggio for v in self._voti]
-        return sum(punteggi)/len(punteggi)
-
-
-
-
+        return sum(punteggi) / len(punteggi)
 
 
 voto_1 = Voto("Analisi Matematica I", 10, 28, False, '2022-02-10')
@@ -65,4 +63,4 @@ mio_libretto.append(voto_2)
 
 print(mio_libretto.media())
 
-# print(mio_libretto._voti)  NO
+# print(mio_libretto._voti) NO
