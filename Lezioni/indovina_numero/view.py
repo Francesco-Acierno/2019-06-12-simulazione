@@ -14,10 +14,8 @@ class View(object):
                                color="blue", size=24)
 
         #Row 1
-        self._txtNmax = ft.TextField(label="N Max", width=100,
-                                     disabled=True, value=self._controller.getNmax())
-        self._txtMmax = ft.TextField(label="Tentativi Max", width=100,
-                                     disabled=True, value=self._controller.getMmax())
+        self._txtNmax = ft.TextField(label="N Max", width=100, disabled=True, value=self._controller.getNmax())
+        self._txtMmax = ft.TextField(label="Tentativi Max", width=100, disabled=True, value=self._controller.getMmax())
         self._txtMrim = ft.TextField(label="Tentativi Rim", width=100,
                                      disabled=True, value=self._controller.getMrim())
 

@@ -3,8 +3,8 @@ import random
 
 class Model(object):
     def __init__(self):
-        self._NMax = 100 #fondo scala
-        self._Mmax = 6 #numero massimo di tentativi
+        self._NMax = 100  # fondo scala
+        self._Mmax = 6  # numero massimo di tentativi
         self._Mrim = self._Mmax
         self._segreto = None
 
