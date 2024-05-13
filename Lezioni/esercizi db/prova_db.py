@@ -6,9 +6,9 @@ try:
     print(type(cnx))
     cursor = cnx.cursor(dictionary=True)
     querys = """INSERT into users
-        (id, nome)
-        VALUES(%s, %s)
-        """
+                (id, nome)
+                VALUES(%s, %s)
+            """
     cursor.execute(querys, (5,"Carlo"))
     # rows = cursor.fetchall()
     # for row in rows:
@@ -17,5 +17,5 @@ try:
     cnx.close()
 except mysql.connector.Error as err:
     print(err)
-else:
+
 
