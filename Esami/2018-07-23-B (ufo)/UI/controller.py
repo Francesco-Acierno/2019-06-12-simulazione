@@ -34,6 +34,9 @@ class Controller:
         self._view.txt_result.controls.append(ft.Text('Grafo correttamente creato'))
         self._view.txt_result.controls.append(ft.Text(f'Numero di nodi: {len(self._model.grafo.nodes)}'))
         self._view.txt_result.controls.append(ft.Text(f'Numero di archi: {len(self._model.grafo.edges)}'))
+        vicini = self._model.getAdiacenti()
+        for v in vicini:
+            self._view.txt_result.controls.append(ft.Text(f'Il peso dei vicini di {v.Name} è {vicini[v]}'))
         self._view.update_page()
 
     def handleSimula(self, e):
