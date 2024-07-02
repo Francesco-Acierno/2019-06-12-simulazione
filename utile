@@ -1,4 +1,5 @@
 DD per scegliere l'oggetto selezionato nel dd
+ingredienti = DAO.getAllingredienti()
 ingredientiDD = map(lambda x: ft.dropdown.Option(
     data=x,
     text=x.display_name,
