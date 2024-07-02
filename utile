@@ -1,15 +1,12 @@
 DD per scegliere l'oggetto selezionato nel dd
-ingredienti = DAO.getAllingredienti()
-ingredientiDD = map(lambda x: ft.dropdown.Option(
-    data=x,
-    text=x.display_name,
-    on_click=self.getSelectedCibo), ingredienti)
-self._view._ddCibo.options = ingredientiDD
+forme = self._model.getForme(anno_int)
+        for f in forme:
+            self._view._ddForma.options.append(
+                ft.dropdown.Option(data=f, text=f, on_click=self.readDDForma))
 
-def getSelectedCibo(self, e):
+def readDDForma(self, e):
     if e.control.data is None:
-        self._choiceCibo = None
+        self._selectedForma = None
     else:
-        self._choiceCibo = e.control.data
-
+        self._selectedForma = e.control.data
         
