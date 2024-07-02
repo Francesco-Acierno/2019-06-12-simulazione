@@ -4,6 +4,7 @@ ingredientiDD = map(lambda x: ft.dropdown.Option(
     data=x,
     text=x.display_name,
     on_click=self.getSelectedCibo), ingredienti)
+self._view._ddCibo.options = ingredientiDD
 
 def getSelectedCibo(self, e):
     if e.control.data is None:
