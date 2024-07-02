@@ -1,0 +1,13 @@
+DD per scegliere l'oggetto selezionato nel dd
+ingredientiDD = map(lambda x: ft.dropdown.Option(
+    data=x,
+    text=x.display_name,
+    on_click=self.getSelectedCibo), ingredienti)
+
+def getSelectedCibo(self, e):
+    if e.control.data is None:
+        self._choiceCibo = None
+    else:
+        self._choiceCibo = e.control.data
+
+        
