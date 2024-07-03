@@ -14,9 +14,12 @@ class Model:
     def getGeneri(self):
         return DAO.getAllGeneri()
 
-    def buildGraph(self, genere):
+    def getMinMax(self, genere):
+        return DAO.getMinMax(genere)
+
+    def buildGraph(self, minG, maxG, genere):
         self._grafo.clear()
-        self._grafo.add_nodes_from(DAO.getAllNodi(genere))
+        self._grafo.add_nodes_from(DAO.getAllTracce(minG, maxG, genere))
 
         for c in self._grafo.nodes():
             self._idMap[c.TrackId] = c

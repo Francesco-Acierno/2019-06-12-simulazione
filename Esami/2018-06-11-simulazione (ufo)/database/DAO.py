@@ -53,17 +53,24 @@ class DAO():
         result = []
 
         cursor = conn.cursor(dictionary=True)
-        query = """ select s.state as stato1, s2.state as stato2
-                    from sighting s, sighting s2 
-                    where s.state <> s2.state 
-                    and year(s.datetime) = %s
-                    and year(s2.datetime) = %s
-                    and s.datetime > s2.datetime"""
+        query = """select s1.id as n1, s2.id as n2, datediff(s2.data, s1.data) as peso
+                   from (select  st.id, max(s.datetime) as data
+                         from state st, sighting s 
+                         where st.id = s.state
+                         and year(s.datetime) = %s
+                         group by st.id) as s1,
+                        (select  st.id, max(s.datetime) as data
+                         from state st, sighting s 
+                         where st.id = s.state
+                         and year(s.datetime) = %s
+                         group by st.id) as s2
+                   where s1.id < s2.id 
+                   group by s1.id, s2.id"""
 
         cursor.execute(query, (anno, anno), )
 
         for row in cursor:
-            result.append((row["stato1"], row["stato2"]))
+            result.append((row["n1"], row["n2"], row["peso"]))
 
         cursor.close()
         conn.close()

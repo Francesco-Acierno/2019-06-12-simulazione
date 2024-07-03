@@ -22,12 +22,16 @@ class Model:
             self.idMap[s.id] = s
 
         archi = DAO.getAllConnessioni(anno)
-        for n1, n2 in archi:
+        for n1, n2, peso in archi:
             if n1.upper() in self.idMap.keys() and n2.upper() in self.idMap.keys():
                 nodo1 = self.idMap[n1.upper()]
                 nodo2 = self.idMap[n2.upper()]
-                if self.grafo.has_edge(nodo1, nodo2) is False:
-                    self.grafo.add_edge(nodo1, nodo2)
+                if peso > 0:
+                    if self.grafo.has_edge(nodo1, nodo2) is False:
+                        self.grafo.add_edge(nodo1, nodo2)
+                elif peso < 0:
+                    if self.grafo.has_edge(nodo2, nodo1) is False:
+                        self.grafo.add_edge(nodo2, nodo1)
 
     def getPrecedenti(self, stato):
         return self.grafo.predecessors(stato)
