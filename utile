@@ -112,3 +112,56 @@ migliori = {}
             migliori[n] = peso
         miglioriOrdinati = sorted(migliori.items(), key=lambda x: x[1], reverse=False)
         return miglioriOrdinati[0]
+
+
+ricorsione standard
+    def getBestPath(self):
+        self._soluzione = []
+        self._costoMigliore = 0
+        for n in self._grafo.nodes:
+            if self._grafo.in_degree(n) == 0:
+                parziale = [n]
+        self._ricorsione(parziale)
+        return self._soluzione, self._costoMigliore
+
+    def _ricorsione(self, parziale):
+
+        if self._grafo.out_degree(parziale[-1]) == 0:
+            if len(parziale) > self._costoMigliore:
+                self._soluzione = copy.deepcopy(parziale)
+                self._costoMigliore = len(parziale)
+
+        for n in self._grafo.neighbors(parziale[-1]):
+            if n not in parziale:
+                parziale.append(n)
+                self._ricorsione(parziale)
+                parziale.pop()
+
+
+ricorsione componente connessa
+ def getBestPath(self, canzone_preferita, memoria_massima):
+        componente_connessa = list(nx.node_connected_component(self._grafo, canzone_preferita))
+        parziale = [canzone_preferita]
+        self._ricorsione(parziale, componente_connessa, memoria_massima)
+        return self._soluzione, self._maxCanzoni
+
+    def _ricorsione(self, parziale, componente_connessa, memoria_massima):
+        memoria_utilizzata = self._calcolaMemoria(parziale)
+        if memoria_utilizzata > memoria_massima:
+            return
+
+        if len(parziale) > self._maxCanzoni:
+            self._soluzione = copy.deepcopy(parziale)
+            self._maxCanzoni = len(parziale)
+
+        for canzone in componente_connessa:
+            if canzone not in parziale:
+                parziale.append(canzone)
+                self._ricorsione(parziale, componente_connessa, memoria_massima)
+                parziale.pop()
+
+    def _calcolaMemoria(self, lista_canzoni):
+        memoria_totale = 0
+        for canzone in lista_canzoni:
+            memoria_totale += canzone.Bytes
+        return memoria_totale
