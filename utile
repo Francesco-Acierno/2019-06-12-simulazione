@@ -1,12 +1,114 @@
 DD per scegliere l'oggetto selezionato nel dd
 forme = self._model.getForme(anno_int)
-        for f in forme:
-            self._view._ddForma.options.append(
-                ft.dropdown.Option(data=f, text=f, on_click=self.readDDForma))
+for f in forme:
+    self._view._ddForma.options.append(
+        ft.dropdown.Option(data=f, text=f, on_click=self.readDDForma))
+self._view.update_page()
 
 def readDDForma(self, e):
     if e.control.data is None:
         self._selectedForma = None
     else:
         self._selectedForma = e.control.data
-        
+
+controller
+dist = self._view._txtDistanza.value
+
+if dist is None:
+    self._view.create_alert("Inserire una distanza e un provider")
+    return
+try:
+    dist_float = float(dist)
+except ValueError:
+    self._view.create_alert("Inserire un valore valido nel campo distanza")
+    return
+self._model.buildGraph(self._choiceProvider, dist_float)
+self._view.txt_result.controls.clear()
+self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato"))
+self._view.txt_result.controls.append(ft.Text(f"Numero nodi: {len(self._model._grafo.nodes)}"))
+self._view.txt_result.controls.append(ft.Text(f"Numero archi: {len(self._model._grafo.edges)}"))
+self._view.update_page()
+
+location = self._model._grafo.nodes
+locationDD = [ft.dropdown.Option(x) for x in location]
+self._view._ddTarget.options = locationDD
+self._view.update_page()
+
+query
+@staticmethod
+def getAllConnessioni(anno):
+conn = DBConnect.get_connection()
+
+result = []
+
+cursor = conn.cursor(dictionary=True)
+query = """select u1.id1 as n1, u2.id2 as n2, count(distinct idr1) as peso
+           from (select  distinct u.user_id as id1, r.review_id as idr1, r.business_id as idb1
+                 from reviews r, users u
+                 where r.user_id = u.user_id
+                 and YEAR(r.review_date)=%s) as u1,
+                (select  distinct u.user_id as id2, r.review_id as idr2, r.business_id as idb2
+                 from reviews r, users u
+                 where r.user_id = u.user_id and YEAR(r.review_date)=%s) as u2
+           where u1.id1 != u2.id2 and u1.idb1=u2.idb2
+           group by u1.id1, u2.id2"""
+
+cursor.execute(query, (anno, anno), )
+
+for row in cursor:
+    result.append((row["n1"], row["n2"], row["peso"]))
+
+cursor.close()
+conn.close()
+return result
+
+
+model
+        for n in self._grafo.nodes():
+            self._idMap[n.user_id] = n
+
+        archi = DAO.getAllConnessioni(anno)
+        for n1, n2, peso in archi:
+            if n1 in self._idMap.keys() and n2 in self._idMap.keys():
+                nodo1 = self._idMap[n1]
+                nodo2 = self._idMap[n2]
+                if self._grafo.has_edge(nodo1, nodo2) is False:
+                    self._grafo.add_edge(nodo1, nodo2, weight=peso)
+        return self._grafo
+
+Controller di un grafo orientato
+    def buildGraph(self, citta, anno):
+        self._grafo.clear()
+        self._grafo.add_nodes_from(DAO.getAllNodes(citta, anno))
+
+        for b in self._grafo.nodes():
+            self._idMap[b.business_id] = b
+
+        archi = DAO.getAllConnessioni(citta, anno)
+        for n1, n2, peso in archi:
+            if n1 in self._idMap.keys() and n2 in self._idMap.keys():
+                nodo1 = self._idMap[n1]
+                nodo2 = self._idMap[n2]
+                if self._grafo.has_edge(nodo1, nodo2) is False:
+                    if peso > 0:
+                        self._grafo.add_edge(nodo1, nodo2, weight=peso)
+                    elif peso < 0:
+                        self._grafo.add_edge(nodo2, nodo1, weight=-peso)
+
+differenza tra archi uscenti ed entranti
+migliori = {}
+        pesoUscenti = 0
+        pesoEntranti = 0
+        peso = 0
+        for n in self._grafo.nodes():
+            peso = 0
+            pesoEntranti = 0
+            pesoUscenti = 0
+            for v in self._grafo.out_edges(n):
+                pesoUscenti += self._grafo[n][v[1]]['weight']
+            for e in self._grafo.in_edges(n):
+                pesoEntranti += self._grafo[e[0]][n]['weight']
+            peso = pesoEntranti - pesoUscenti
+            migliori[n] = peso
+        miglioriOrdinati = sorted(migliori.items(), key=lambda x: x[1], reverse=False)
+        return miglioriOrdinati[0]
