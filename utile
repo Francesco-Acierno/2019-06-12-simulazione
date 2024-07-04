@@ -238,3 +238,14 @@ def addEdges(self,anno):
                 if nodo1!=nodo2 and self.grafo.has_edge(nodo1,nodo2)==False:
                     if DAO.getPeso(nodo1,anno,nodo2)>0:
                      self.grafo.add_edge(nodo1,nodo2)
+
+
+select count(*) as c " +
+				"from sighting s1, sighting s2 " +
+				"where year(s1.datetime)=year(s2.datetime) " +
+				"and year(s1.datetime)=? " +
+				"and s1.country='us' " +
+				"and s2.country='us' " +
+				"and s1.state=? " +
+				"and s2.state=? " +
+				"and s2.datetime>s1.datetime";
