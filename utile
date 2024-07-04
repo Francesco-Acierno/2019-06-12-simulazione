@@ -216,3 +216,25 @@ class Avvistamenti
 
     def __hash__(self):
         return hash(self.id)
+
+
+
+query alessia
+select count(*) as peso
+from (select s.`datetime` as d1
+from sighting s
+where s.country ='us' and s.state =%s
+and year(s.`datetime`)=%s) as t1,
+(select s.`datetime` as d2
+from sighting s
+where s.country ='us' and s.state =%s
+and year(s.`datetime`)=%s) as t2
+where d1<d2
+
+def addEdges(self,anno):
+        self.grafo.clear_edges()
+        for nodo1 in self.grafo.nodes:
+            for nodo2 in self.grafo.nodes:
+                if nodo1!=nodo2 and self.grafo.has_edge(nodo1,nodo2)==False:
+                    if DAO.getPeso(nodo1,anno,nodo2)>0:
+                     self.grafo.add_edge(nodo1,nodo2)
