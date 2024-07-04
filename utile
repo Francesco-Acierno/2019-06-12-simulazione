@@ -249,3 +249,14 @@ select count(*) as c " +
 				"and s1.state=? " +
 				"and s2.state=? " +
 				"and s2.datetime>s1.datetime";
+
+select count(*) as peso
+        from (select s.datetime as d1
+        from sighting s
+        where s.country ='us' and s.state =%s
+        and year(s.datetime)=%s) as t1,
+        (select s.datetime as d2
+        from sighting s
+        where s.country ='us' and s.state =%s
+        and year(s.datetime)=%s) as t2
+        where d1<d2
